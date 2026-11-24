@@ -11,7 +11,7 @@ export interface TemplateStyle {
   eyebrowTracking: string;
 }
 
-export const TEMPLATE_STYLES: Record<TemplateId, TemplateStyle> = {
+export const TEMPLATE_STYLES: Partial<Record<TemplateId, TemplateStyle>> = {
   royal_ivory: { frame: "arch", ornament: "lotus", eyebrowTracking: "tracking-[0.28em]" },
   midnight_gold: { frame: "double", ornament: "crescent", eyebrowTracking: "tracking-[0.34em]" },
   rose_regal: { frame: "soft-arch", ornament: "vine", eyebrowTracking: "tracking-[0.24em]" },
@@ -30,6 +30,8 @@ export function templatePattern(template: TemplateId): string {
       return `repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--inv-accent) 8%, transparent) 14px 15px)`;
     case "emerald_palace":
       return `linear-gradient(45deg, color-mix(in srgb, var(--inv-accent) 9%, transparent) 25%, transparent 25% 75%, color-mix(in srgb, var(--inv-accent) 9%, transparent) 75%), linear-gradient(45deg, color-mix(in srgb, var(--inv-accent) 9%, transparent) 25%, transparent 25% 75%, color-mix(in srgb, var(--inv-accent) 9%, transparent) 75%)`;
+    default:
+      return `radial-gradient(circle at 1px 1px, ${dot} 1px, transparent 0)`;
   }
 }
 
@@ -43,6 +45,8 @@ export function templatePatternSize(template: TemplateId): string {
       return "auto";
     case "emerald_palace":
       return "28px 28px, 28px 28px";
+    default:
+      return "22px 22px";
   }
 }
 

@@ -20,7 +20,7 @@ function formatWhen(iso: string | null): string {
 function InviteCard({ invite }: { invite: InviteSummary }) {
   const { rsvp } = invite;
   return (
-    <Card className="gap-3 p-4" data-testid="invite-card">
+    <Card className="gap-3 p-4" data-testid="invite-card" data-invite-card="">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant={invite.status === "published" ? "default" : "secondary"}>
           {invite.status === "published" ? dashboard.published : dashboard.draft}

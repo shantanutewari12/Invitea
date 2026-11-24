@@ -1,4 +1,4 @@
-# Regalia: royal digital invitations (PWA)
+# Invitea: beautiful digital invitations (PWA)
 
 A host describes a celebration, gets a styled invitation, and shares a **personal link per guest**
 (`/i/<token>`). A guest link needs the internet **once**; after that it opens fully offline

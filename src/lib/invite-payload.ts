@@ -31,7 +31,7 @@ export interface InvitePayload {
     version: number;
     displayMode: DisplayMode;
     spec: InviteSpec;
-    /** Free plan shows a "Made with Regalia" watermark. */
+    /** Free plan shows a "Made with Invitea" watermark. */
     watermark: boolean;
   };
   audience: PayloadAudience;

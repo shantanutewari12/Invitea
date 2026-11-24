@@ -1,5 +1,5 @@
 /*
- * Regalia design tokens: ivory, deep burgundy, antique gold.
+ * Invitea design tokens: ivory, deep burgundy, antique gold.
  * Shared by the host app (src/app/globals.css) and the standalone guest viewer
  * (src/viewer/viewer.css). Requires Tailwind v4 to be imported by the including file.
  */
@@ -272,3 +272,47 @@
     scroll-behavior: auto !important;
   }
 }
+
+.invite-card-leaving { animation: invite-card-out 0.32s ease-in forwards; pointer-events: none; }
+@keyframes invite-card-out { to { opacity: 0; transform: scale(0.94) translateY(8px); } }
+
+/* Floating decorations on the invitation pages (see renderer/book/art.tsx). */
+.amb { position: absolute; display: block; will-change: transform, opacity; animation-iteration-count: infinite; }
+.amb-fall { top: 0; animation-name: amb-fall; animation-timing-function: linear; }
+.amb-rise { bottom: 0; animation-name: amb-rise; animation-timing-function: linear; }
+.amb-drift { animation-name: amb-drift; animation-timing-function: linear; }
+.amb-twinkle { animation-name: amb-twinkle; animation-timing-function: ease-in-out; line-height: 1; }
+.amb-petal { width: 10px; height: 14px; border-radius: 150% 0 150% 0; background: var(--c); }
+.amb-confetti { width: 8px; height: 12px; border-radius: 1px; background: var(--c); }
+.amb-leaf { width: 11px; height: 17px; border-radius: 0 100% 0 100%; background: var(--c); }
+.amb-balloon { width: 20px; height: 26px; border-radius: 50% 50% 48% 48%; background: var(--c); }
+.amb-balloon::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 24px; background: currentColor; opacity: 0.45; }
+.amb-glyph { line-height: 1; }
+.amb-cloud { width: 84px; height: 26px; border-radius: 999px; background: rgb(255 255 255 / 0.9); }
+.amb-cloud::before, .amb-cloud::after { content: ""; position: absolute; border-radius: 50%; background: inherit; }
+.amb-cloud::before { left: 14px; top: -14px; width: 34px; height: 34px; }
+.amb-cloud::after { left: 42px; top: -9px; width: 26px; height: 26px; }
+@keyframes amb-fall {
+  0% { transform: translate3d(0, -8cqh, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { transform: translate3d(var(--dx, 16px), 50cqh, 0) rotate(180deg); }
+  90% { opacity: 0.9; }
+  100% { transform: translate3d(0, 108cqh, 0) rotate(360deg); opacity: 0; }
+}
+@keyframes amb-rise {
+  0% { transform: translate3d(0, 8cqh, 0); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { transform: translate3d(var(--dx, 16px), -50cqh, 0); }
+  90% { opacity: 0.9; }
+  100% { transform: translate3d(0, -108cqh, 0); opacity: 0; }
+}
+@keyframes amb-drift {
+  from { transform: translate3d(-30cqw, 0, 0); }
+  to { transform: translate3d(120cqw, 0, 0); }
+}
+@keyframes amb-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.6); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) { .amb-layer { display: none; } }
+[data-motion="reduced"] .amb-layer { display: none; }

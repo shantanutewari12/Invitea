@@ -80,8 +80,8 @@ describe("InviteRenderer (pure, static)", () => {
   });
 
   it("shows the Free-plan watermark only when asked", () => {
-    expect(html({ watermark: true })).toContain("Made with Regalia");
-    expect(html({ watermark: false })).not.toContain("Made with Regalia");
+    expect(html({ watermark: true })).toContain("Made with Invitea");
+    expect(html({ watermark: false })).not.toContain("Made with Invitea");
   });
 
   it("offers the map link online and falls back to the address text offline", () => {

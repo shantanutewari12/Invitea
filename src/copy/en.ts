@@ -10,8 +10,8 @@
  */
 
 export const brand = {
-  name: "Regalia",
-  tagline: "Royal digital invitations",
+  name: "Invitea",
+  tagline: "Beautiful digital invitations",
   description:
     "Describe your celebration and receive a beautifully styled digital invitation, with a personal link for every guest.",
 } as const;
@@ -104,10 +104,39 @@ export const greeting = {
 } as const;
 
 export const templates = {
-  royal_ivory: { name: "Royal Ivory", blurb: "Warm ivory with burgundy and antique gold" },
-  midnight_gold: { name: "Midnight Gold", blurb: "Deep midnight with glowing gold" },
-  rose_regal: { name: "Rose Regal", blurb: "Soft rose with deep wine accents" },
-  emerald_palace: { name: "Emerald Palace", blurb: "Rich emerald with antique gold" },
+  // Wedding
+  royal_ivory: { name: "Royal Ivory", blurb: "Lotus garlands on warm ivory" },
+  midnight_gold: { name: "Royal Baraat", blurb: "Elephants, jali and gold on maroon" },
+  emerald_palace: { name: "Mandap Emerald", blurb: "A marigold mandap in emerald and gold" },
+  rose_regal: { name: "Rose Garland", blurb: "Blush roses and romantic script" },
+  // Birthday
+  bday_balloons: { name: "Balloon Party", blurb: "Bright balloons and polka dots" },
+  bday_confetti: { name: "Confetti Pop", blurb: "Party hat, streamers and confetti" },
+  bday_cake: { name: "Sweet Cake", blurb: "A candlelit cake on cheerful aqua" },
+  // Anniversary
+  anniv_roses: { name: "Red Roses", blurb: "A rose bouquet in deep wine" },
+  anniv_rings: { name: "Golden Rings", blurb: "Interlocked rings in navy and gold" },
+  anniv_hearts: { name: "Forever Hearts", blurb: "Soft blush hearts and script" },
+  // Baby shower
+  baby_teddy: { name: "Teddy Hugs", blurb: "A teddy bear with a balloon" },
+  baby_clouds: { name: "Little Cloud", blurb: "Moon, clouds and stars in sky blue" },
+  baby_toys: { name: "Toy Box", blurb: "Play blocks and a rattle" },
+  // Naming ceremony
+  naming_cradle: { name: "Little Jhula", blurb: "A flower-draped cradle" },
+  naming_lotus: { name: "Lotus Blessing", blurb: "A lotus with tiny footprints" },
+  naming_moon: { name: "Moonlight Name", blurb: "A sleepy moon under indigo skies" },
+  // First haircut (Mundan)
+  mundan_kalash: { name: "Sacred Kalash", blurb: "Kalash, mango leaves and diyas" },
+  mundan_sun: { name: "Surya Blessings", blurb: "A golden sun mandala" },
+  mundan_marigold: { name: "Marigold Mala", blurb: "Marigold garlands on green" },
+  // Housewarming
+  house_griha: { name: "Griha Pravesh", blurb: "A festive home with toran and diyas" },
+  house_keys: { name: "New Keys", blurb: "A welcoming door, keys and plants" },
+  house_rangoli: { name: "Rangoli Welcome", blurb: "A colourful rangoli mandala" },
+  // Custom
+  custom_monogram: { name: "Clean Monogram", blurb: "A refined monogram, any occasion" },
+  custom_festive: { name: "Festive Lights", blurb: "Bunting, lights and a gift" },
+  custom_botanical: { name: "Botanical Garden", blurb: "A wreath of leaves and berries" },
 } as const;
 
 export const typography = {
@@ -162,7 +191,7 @@ export const viewer = {
   addToHomeScreen: "Add to Home Screen",
   addToHomeScreenIos: "Tap Share, then “Add to Home Screen”.",
   previewBadge: "Preview",
-  watermark: "Made with Regalia",
+  watermark: "Made with Invitea",
   countdownTitle: "Counting down to the celebration",
   countdownDays: "Days",
   countdownHours: "Hours",
@@ -240,8 +269,11 @@ export const auth = {
 export const dashboard = {
   delete: "Delete",
   deleting: "Deleting…",
-  deleteConfirm: "Delete this invitation? Its links, guests and replies will be removed for good.",
   deleteFailed: "Could not delete. Please try again.",
+  deleteSure: "Delete for good?",
+  deleteYes: "Yes, delete",
+  deleteKeep: "Keep",
+  deleted: "Invitation deleted successfully",
   title: "Your invitations",
   create: "Create invitation",
   emptyTitle: "No invitations yet",
@@ -266,8 +298,6 @@ export const create = {
   title: "Create your invitation",
   subtitle: "Tell us about the celebration. We'll style it, and you can refine everything next.",
   eventType: "Type of celebration",
-  prompt: "Describe the look and feel",
-  promptHint: "For example: “Royal, deep burgundy and gold, grand and traditional”.",
   hosts: "Host names",
   hostsHint: "Separate names with a comma.",
   eventTitle: "Event name",
@@ -288,8 +318,6 @@ export const create = {
   celebrating: "What are we celebrating?",
   bride: "Bride",
   groom: "Groom",
-  describeLook: "Describe the look (optional)",
-  aiNote: "AI turns this into your design. You can edit everything after.",
   moreDetails: "More details (optional)",
   whoInvited: "Who's invited?",
   pasteNames: "Paste names, one per line",
@@ -298,8 +326,7 @@ export const create = {
   linkReady: "Link ready",
   guestNote: "Each guest sees “Dear {name},” on their own page.",
   chooseLook: "Choose the look",
-  maroonGold: "Maroon & Gold",
-  ivoryGold: "Ivory & Gold",
+  templateNote: "Each occasion has its own designs. You can change it later.",
   picked: "✓ Picked",
   motion: "Motion",
   pageFlip: "Page flip",

@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { viewer } from "@/copy/en";
 
 import type { BookTheme, LoaderIcon } from "./theme";
@@ -49,10 +51,24 @@ function Icon({ kind, mono }: { kind: LoaderIcon; mono: string }) {
  * "Opening your invitation…": the event icon bounces 3 times (about 1.2 s) with a squash on
  * landing and a ground shadow. `still` (static mode / reduced motion) shows a resting icon.
  */
-export function Loader({ icon, theme, mono = "A&M", still = false }: { icon: LoaderIcon; theme: BookTheme; mono?: string; still?: boolean }) {
+export function Loader({
+  icon,
+  theme,
+  mono = "A&M",
+  still = false,
+  style,
+}: {
+  icon: LoaderIcon;
+  theme: BookTheme;
+  mono?: string;
+  still?: boolean;
+  /** The template's colour variables, so the loader matches the card that is about to open. */
+  style?: CSSProperties;
+}) {
   return (
     <main
       data-theme={theme}
+      style={style}
       data-testid="viewer-message"
       role="status"
       className="book-desk flex min-h-dvh flex-col items-center justify-center gap-5 px-6 text-center"

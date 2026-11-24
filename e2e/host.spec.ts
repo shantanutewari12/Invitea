@@ -127,6 +127,8 @@ test("a host can pick the built-in music while creating, and delete an invitatio
   await page.getByLabel(create.startsAt).fill("2031-02-14T18:30");
   await page.getByRole("button", { name: create.next }).click();
   await page.getByRole("button", { name: create.next }).click();
+  await page.getByTestId("template-royal_ivory").click();
+  await expect(page.getByTestId("template-royal_ivory")).toHaveAttribute("aria-checked", "true");
   await page.getByRole("radio", { name: create.musicMemories }).click();
   await page.getByRole("button", { name: create.generate }).click();
   await expect(page).toHaveURL(/\/invites\/[0-9a-f-]{36}\?new=1$/);
@@ -134,7 +136,12 @@ test("a host can pick the built-in music while creating, and delete an invitatio
 
   await page.goto("/dashboard");
   await expect(page.getByTestId("invite-card")).toHaveCount(4);
-  page.once("dialog", (dialog) => void dialog.accept());
+  // No native dialog: an inline confirm, then a toast.
+  page.on("dialog", () => {
+    throw new Error("a native dialog was opened");
+  });
   await page.getByTestId("invite-card").first().getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: dashboard.deleteYes }).click();
+  await expect(page.getByTestId("toast")).toHaveText(new RegExp(dashboard.deleted));
   await expect(page.getByTestId("invite-card")).toHaveCount(3);
 });

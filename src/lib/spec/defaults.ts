@@ -1,25 +1,16 @@
 import { eventTypeDefaults, fmt, greeting } from "@/copy/en";
 
 import { TEMPLATE_PALETTES } from "./contrast";
+import { DEFAULT_TEMPLATE_BY_EVENT } from "./designs";
 import {
   type AnimationPresetId,
   type EventType,
-  type TemplateId,
   SPEC_SCHEMA_VERSION,
 } from "./constants";
 import type { GenerateInviteInput, InviteSpec, LlmStyle } from "./schema";
 import { localDateTimeToIso } from "./time";
 
-export const DEFAULT_TEMPLATE_BY_EVENT: Record<EventType, TemplateId> = {
-  wedding: "royal_ivory",
-  birthday: "rose_regal",
-  anniversary: "midnight_gold",
-  baby_shower: "rose_regal",
-  naming_ceremony: "emerald_palace",
-  first_haircut: "royal_ivory",
-  housewarming: "emerald_palace",
-  custom: "royal_ivory",
-};
+export { DEFAULT_TEMPLATE_BY_EVENT };
 
 export const DEFAULT_ANIMATION_BY_EVENT: Record<EventType, AnimationPresetId> = {
   wedding: "gate_open",

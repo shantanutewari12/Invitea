@@ -18,7 +18,7 @@ import {
   create,
   displayMode as displayCopy,
   intensity as intensityCopy,
-  templates,
+  eventTypes,
   typography,
 } from "@/copy/en";
 import { track } from "@/lib/analytics";
@@ -29,11 +29,11 @@ import {
   ANIMATION_PRESET_IDS,
   DISPLAY_MODES,
   LIMITS,
-  TEMPLATE_IDS,
   TYPOGRAPHY_IDS,
 } from "@/lib/spec/constants";
 import type { InviteEvent, InviteSpec } from "@/lib/spec/schema";
 import { isoToLocalInput, localDateTimeToIso } from "@/lib/spec/time";
+import { TemplatePicker } from "@/components/host/TemplatePicker";
 import { InviteRenderer } from "@/renderer/InviteRenderer";
 import type { AnimationLayerProps } from "@/renderer/types";
 import { cn } from "@/lib/utils";
@@ -201,27 +201,17 @@ export function Builder({ invite, isNew = false }: { invite: HostInvite; isNew?:
       <Card className="gap-4 p-4">
         <h2 className="font-display text-xl font-semibold">{builder.design}</h2>
         <Field id="template" label={builder.template}>
-          <div className="grid grid-cols-2 gap-2">
-            {TEMPLATE_IDS.map((id) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={spec.template === id}
-                onClick={() => change({ template: id, palette: { ...TEMPLATE_PALETTES[id] } })}
-                className={cn(
-                  "flex min-h-11 flex-col gap-1 rounded-lg border p-2 text-left text-sm",
-                  spec.template === id ? "border-gold bg-accent" : "border-border bg-background hover:bg-muted",
-                )}
-              >
-                <span className="flex gap-1">
-                  {(["background", "surface", "accent", "text"] as const).map((k) => (
-                    <span key={k} className="size-4 rounded-full border border-black/10" style={{ background: TEMPLATE_PALETTES[id][k] }} />
-                  ))}
-                </span>
-                <span className="font-semibold">{templates[id].name}</span>
-              </button>
-            ))}
-          </div>
+          <TemplatePicker
+            eventType={spec.eventType}
+            value={spec.template}
+            onChange={(id) => change({ template: id, palette: { ...TEMPLATE_PALETTES[id] } })}
+            text={{
+              eyebrow: `${eventTypes[spec.eventType]} invitation`,
+              mono: spec.hosts.map((h) => Array.from(h.trim())[0]?.toUpperCase() ?? "").join("") || "A&M",
+              names: spec.hosts.length > 0 ? spec.hosts.join(" & ") : spec.headline,
+              line: "",
+            }}
+          />
         </Field>
         <Field id="colours" label={builder.colours}>
           <div className="grid grid-cols-2 gap-2">
@@ -403,6 +393,7 @@ export function Builder({ invite, isNew = false }: { invite: HostInvite; isNew?:
           rsvp={{ mode: "preview", maxPartySize: 2, previous: null, result: "idle" }}
           AnimationLayer={animated ? PreviewAnimation : undefined}
           preview
+          layout="book"
         />
       </div>
     </div>

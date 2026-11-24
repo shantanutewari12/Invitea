@@ -3,9 +3,11 @@
 import { useRef } from "react";
 
 import { eventTypes, greeting as greetingCopy, viewer } from "@/copy/en";
+import { designFor } from "@/lib/spec/designs";
 import { renderGreeting } from "@/lib/spec/greeting";
 
-import { Book } from "./book/Book";
+import { Motif, ornamentFor } from "./book/art";
+import { Book, titleClass } from "./book/Book";
 import { themeFor, themeVars } from "./book/theme";
 import { Countdown } from "./Countdown";
 import { useTextEffects } from "./effects";
@@ -33,8 +35,10 @@ function monogram(hosts: string[]): string {
     .join(" & ");
 }
 
-function frameClass(frame: TemplateStyle["frame"]): string {
+function frameClass(frame: TemplateStyle["frame"] | "circle"): string {
   switch (frame) {
+    case "circle":
+      return "rounded-full border-2 border-inv-accent";
     case "arch":
       return "rounded-t-[999px] rounded-b-xl border border-inv-accent";
     case "soft-arch":
@@ -73,22 +77,31 @@ export function InviteRenderer({
   layout = "scroll",
   className = "",
 }: InviteRendererProps) {
-  const style = TEMPLATE_STYLES[spec.template] ?? TEMPLATE_STYLES.royal_ivory;
-  const displayFont = displayFontClass(spec.typography);
+  const style = TEMPLATE_STYLES[spec.template] ?? TEMPLATE_STYLES.royal_ivory!;
+  const design = designFor(spec.eventType, spec.template);
+  const book = layout === "book";
+  // The book uses the template's own look; the long-page layout keeps the spec's typography and palette.
+  const displayFont = book ? titleClass(design.titleFont) : displayFontClass(spec.typography);
+  const ornament = book ? ornamentFor(design.corner) : style.ornament;
   const greetingText = renderGreeting(spec.greetingTemplate, guestName);
   const firstEvent = [...spec.events].sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())[0];
   const eventLabel = eventTypes[spec.eventType] ?? eventTypes.custom;
 
   const musicControl = useRef<MusicControl | null>(null);
-  const book = layout === "book";
-  const showHero = !book || Boolean(assets?.imageUrl);
+  const hasPhoto = Boolean(assets?.imageUrl);
+  const heroFrame = book ? design.frame : style.frame;
 
   const introEl = (
     <>
       <header className="flex w-full flex-col items-center gap-5">
-        {showHero && (
+        {book && !hasPhoto && (
+          <div className="w-full max-w-[17rem]" data-testid="hero-art">
+            <Motif id={design.motif} mono={monogram(spec.hosts).replace(/ /g, "")} />
+          </div>
+        )}
+        {(!book || hasPhoto) && (
         <div
-          className={`relative w-full ${book ? "max-w-[11rem]" : "max-w-[18rem]"} overflow-hidden bg-inv-surface ${frameClass(style.frame)}`}
+          className={`relative w-full ${book ? "max-w-[11rem]" : "max-w-[18rem]"} overflow-hidden bg-inv-surface ${frameClass(heroFrame)}`}
           data-testid="hero-frame"
         >
           {assets?.imageUrl ? (
@@ -99,13 +112,13 @@ export function InviteRenderer({
               width={576}
               height={720}
               decoding="async"
-              className="aspect-4/5 w-full object-cover"
+              className={`${book && design.frame === "circle" ? "aspect-square" : "aspect-4/5"} w-full object-cover`}
             />
           ) : (
             <div className={`flex aspect-4/5 w-full flex-col items-center justify-center gap-3 ${displayFont}`}>
-              <OrnamentDivider variant={style.ornament} />
+              <OrnamentDivider variant={ornament} />
               <span className="text-5xl font-semibold text-inv-accent">{monogram(spec.hosts)}</span>
-              <OrnamentDivider variant={style.ornament} />
+              <OrnamentDivider variant={ornament} />
             </div>
           )}
         </div>
@@ -134,7 +147,7 @@ export function InviteRenderer({
         )}
       </header>
 
-      <OrnamentDivider variant={style.ornament} />
+      <OrnamentDivider variant={ornament} />
 
       <p data-testid="guest-greeting" className="font-script text-balance text-4xl leading-tight font-semibold text-inv-text">
         <GreetingText text={greetingText} />
@@ -154,7 +167,7 @@ export function InviteRenderer({
 
       {spec.closingNote && (
         <>
-          <OrnamentDivider variant={style.ornament} />
+          <OrnamentDivider variant={ornament} />
           <p className={`${displayFont} max-w-sm text-balance text-2xl leading-snug font-medium text-inv-text`}>
             {spec.closingNote}
           </p>
@@ -191,7 +204,11 @@ export function InviteRenderer({
     const bookEl = (
       <Book
         theme={themeFor(spec)}
-        animated={Boolean(AnimationLayer)}
+        design={design}
+        // The editor's preview has no animation layer, but should still show the card moving.
+        animated={preview ? spec.displayMode === "animated" : Boolean(AnimationLayer)}
+        embedded={preview}
+        startPage={preview ? 1 : 0}
         cover={{
           eyebrow: `${eventLabel} ${eventLabel.toLowerCase().includes("invitation") ? "" : "invitation"}`.trim(),
           mono: monogram(spec.hosts).replace(/ /g, "") || Array.from(spec.headline)[0]?.toUpperCase() || "",
@@ -202,7 +219,7 @@ export function InviteRenderer({
         details={detailsEl}
         rsvp={rsvpEl}
         onOpen={() => musicControl.current?.play()}
-        endPage={<OrnamentDivider variant={style.ornament} />}
+        endPage={<OrnamentDivider variant={ornament} />}
         className={className}
       />
     );

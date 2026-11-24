@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { Logo } from "@/components/brand";
 import { auth, brand } from "@/copy/en";
 import { isE2EFixtureMode } from "@/lib/env";
 import { getSessionUser } from "@/lib/host/session";
@@ -14,7 +15,7 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-8 px-5 py-10">
       <header className="text-center">
-        <p className="font-display text-4xl font-semibold text-primary">{brand.name}</p>
+        <Logo size={40} className="justify-center text-4xl text-primary" />
         <p className="mt-1 text-sm text-muted-foreground">{brand.tagline}</p>
         <h1 className="mt-8 font-display text-2xl font-semibold">{auth.signInTitle}</h1>
       </header>

@@ -20,7 +20,41 @@ export type EventType = (typeof EVENT_TYPES)[number];
 export const DISPLAY_MODES = ["animated", "static"] as const;
 export type DisplayMode = (typeof DISPLAY_MODES)[number];
 
-export const TEMPLATE_IDS = ["royal_ivory", "midnight_gold", "rose_regal", "emerald_palace"] as const;
+export const TEMPLATE_IDS = [
+  // Wedding
+  "royal_ivory",
+  "midnight_gold",
+  "emerald_palace",
+  "rose_regal",
+  // Birthday
+  "bday_balloons",
+  "bday_confetti",
+  "bday_cake",
+  // Anniversary
+  "anniv_roses",
+  "anniv_rings",
+  "anniv_hearts",
+  // Baby shower
+  "baby_teddy",
+  "baby_clouds",
+  "baby_toys",
+  // Naming ceremony
+  "naming_cradle",
+  "naming_lotus",
+  "naming_moon",
+  // First haircut (Mundan)
+  "mundan_kalash",
+  "mundan_sun",
+  "mundan_marigold",
+  // Housewarming
+  "house_griha",
+  "house_keys",
+  "house_rangoli",
+  // Custom
+  "custom_monogram",
+  "custom_festive",
+  "custom_botanical",
+] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
 export const TYPOGRAPHY_IDS = ["serif_classic", "serif_modern"] as const;

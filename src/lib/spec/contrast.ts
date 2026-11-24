@@ -1,4 +1,5 @@
-import type { TemplateId } from "./constants";
+import { TEMPLATE_IDS, type TemplateId } from "./constants";
+import { DESIGNS, paletteOf } from "./designs";
 
 export interface Palette {
   background: string;
@@ -7,13 +8,18 @@ export interface Palette {
   text: string;
 }
 
-/** Default palette per template. All of these pass the checks below (see contrast.test.ts). */
-export const TEMPLATE_PALETTES: Record<TemplateId, Palette> = {
+/** The four original templates keep their palettes; every other template takes its colours from its design. */
+const ORIGINAL_PALETTES: Partial<Record<TemplateId, Palette>> = {
   royal_ivory: { background: "#fbf6ea", surface: "#fffdf7", accent: "#8a6420", text: "#3a1420" },
   midnight_gold: { background: "#0f1b2d", surface: "#17263d", accent: "#e0b85c", text: "#f6efd9" },
   rose_regal: { background: "#fbedee", surface: "#fff8f8", accent: "#8e2646", text: "#3b1620" },
   emerald_palace: { background: "#0e2f29", surface: "#14403a", accent: "#e3c275", text: "#f8f1dc" },
 };
+
+/** Default palette per template. All of these pass the checks below (see contrast.test.ts). */
+export const TEMPLATE_PALETTES = Object.fromEntries(
+  TEMPLATE_IDS.map((id) => [id, ORIGINAL_PALETTES[id] ?? paletteOf(DESIGNS[id])]),
+) as Record<TemplateId, Palette>;
 
 /** WCAG AA: 4.5:1 for normal text, 3:1 for large text and UI ornaments. */
 export const CONTRAST_AA_TEXT = 4.5;

@@ -11,11 +11,12 @@ import { builder, common, create, errors, eventTypes, fmt } from "@/copy/en";
 import { track } from "@/lib/analytics";
 import { parseGuestLines } from "@/lib/guests";
 import { TEMPLATE_PALETTES } from "@/lib/spec/contrast";
-import { buildDefaultStyle, buildInviteSpec, DEFAULT_TEMPLATE_BY_EVENT } from "@/lib/spec/defaults";
-import { EVENT_TYPES, type DisplayMode, type EventType } from "@/lib/spec/constants";
-import { InviteCard } from "@/renderer/book/InviteCard";
-import { themeFor } from "@/renderer/book/theme";
+import { buildDefaultStyle, buildInviteSpec } from "@/lib/spec/defaults";
+import { EVENT_TYPES, type DisplayMode, type EventType, type TemplateId } from "@/lib/spec/constants";
+import { DEFAULT_TEMPLATE_BY_EVENT, designFor, designVars, DESIGNS } from "@/lib/spec/designs";
 import { InviteRenderer } from "@/renderer/InviteRenderer";
+
+import { TemplatePicker } from "@/components/host/TemplatePicker";
 
 const TOTAL = 4; // step 4 (review and publish) is the full editor, opened right after step 3
 
@@ -63,6 +64,7 @@ function LivePreview({ spec }: { spec: ReturnType<typeof buildInviteSpec> | null
             spec={spec}
             guestName={builder.sampleGuest}
             rsvp={{ mode: "preview", maxPartySize: 2, previous: null, result: "idle" }}
+            layout="book"
             preview
           />
         )}
@@ -76,9 +78,9 @@ export function CreateForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [eventType, setEventType] = useState<EventType>("wedding");
-  const [values, setValues] = useState({ bride: "", groom: "", hosts: "", eventTitle: "", startsAt: "", venue: "", address: "", mapUrl: "", prompt: "" });
+  const [values, setValues] = useState({ bride: "", groom: "", hosts: "", eventTitle: "", startsAt: "", venue: "", address: "", mapUrl: "" });
   const [guestsText, setGuestsText] = useState("");
-  const [cover, setCover] = useState<"wedding" | "ivory" | null>(null);
+  const [picked, setPicked] = useState<TemplateId | null>(null);
   const [mode, setMode] = useState<DisplayMode>("animated");
   const [music, setMusic] = useState<"none" | "memories">("memories");
   const [busy, setBusy] = useState(false);
@@ -95,21 +97,16 @@ export function CreateForm() {
     .filter(Boolean)
     .slice(0, 4);
   const { guests, errors: guestErrors } = parseGuestLines(guestsText);
-  const hasCoverChoice = twoNames || eventType === "custom";
-  const pickedTemplate = cover === null ? null : cover === "ivory" ? ("royal_ivory" as const) : ("midnight_gold" as const);
-  const theme = themeFor({ eventType, template: pickedTemplate ?? DEFAULT_TEMPLATE_BY_EVENT[eventType] });
+  // The template picked in step 3 (each occasion has its own set; switching occasion resets to its first).
+  const template: TemplateId = picked && DESIGNS[picked].category === eventType ? picked : DEFAULT_TEMPLATE_BY_EVENT[eventType];
+  const design = designFor(eventType, template);
   const names = hosts.length > 0 ? hosts.join(" & ") : "Your names";
   const coverText = { eyebrow: `${eventTypes[eventType]} invitation`, mono: initials(hosts) || "A&M", names, line: "" };
-
-  const whenDate = values.startsAt ? new Date(values.startsAt) : null;
-  const when = whenDate && !Number.isNaN(whenDate.getTime()) ? whenDate.toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short" }) : "";
-  const cardLines = [when, values.venue.trim()];
 
   // Local, instant version of what the generator produces, so the preview matches the editor's.
   const previewSpec = useMemo(() => {
     try {
       const style = buildDefaultStyle(eventType, hosts.length > 0 ? hosts : ["Your names"]);
-      const picked = hasCoverChoice ? pickedTemplate : null;
       return buildInviteSpec(
         {
           eventType,
@@ -127,13 +124,13 @@ export function CreateForm() {
             },
           ],
         },
-        picked ? { ...style, template: picked, palette: { ...TEMPLATE_PALETTES[picked] } } : style,
+        { ...style, template, palette: { ...TEMPLATE_PALETTES[template] } },
       );
     } catch {
       return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `hosts` is derived from `values`/`eventType`
-  }, [eventType, values, mode, pickedTemplate, hasCoverChoice]);
+  }, [eventType, values, mode, template]);
 
   async function importCsv(file: File) {
     const text = await file.text();
@@ -146,7 +143,7 @@ export function CreateForm() {
     try {
       const generated = await postJson("/api/ai/generate-invite", {
         eventType,
-        prompt: values.prompt.trim(),
+        prompt: "",
         hosts,
         displayMode: mode,
         events: [
@@ -164,11 +161,9 @@ export function CreateForm() {
       if (generated.status === 422) throw new Error(create.invalidTime);
       if (!generated.ok) throw new Error(errors.invalidInput);
       const { spec, source } = (await generated.json()) as { spec: Record<string, unknown>; source: "ai" | "fallback" };
-      // A cover picked in step 3 sets the template (and its colours), like the editor's template buttons.
-      if (hasCoverChoice && pickedTemplate) {
-        spec.template = pickedTemplate;
-        spec.palette = { ...TEMPLATE_PALETTES[pickedTemplate] };
-      }
+      // The template picked in step 3 sets the look (and its colours), like the editor's template buttons.
+      spec.template = template;
+      spec.palette = { ...TEMPLATE_PALETTES[template] };
 
       const saved = await postJson("/api/invites", { spec });
       if (!saved.ok) throw new Error(errors.server);
@@ -257,9 +252,6 @@ export function CreateForm() {
         <FormField id="eventTitle" label={create.eventTitle} hint={create.eventTitleHint}>
           <input id="eventTitle" maxLength={80} value={values.eventTitle} onChange={set("eventTitle")} className={underlineControl} />
         </FormField>
-        <FormField id="prompt" label={create.describeLook} hint={create.aiNote}>
-          <textarea id="prompt" maxLength={600} rows={3} value={values.prompt} onChange={set("prompt")} className={underlineControl} />
-        </FormField>
       </>
     ) : step === 2 ? (
       <>
@@ -311,28 +303,8 @@ export function CreateForm() {
     ) : (
       <>
         <h2 className="font-display text-3xl font-bold">{create.chooseLook}</h2>
-        {hasCoverChoice && (
-          <div role="radiogroup" aria-label={create.chooseLook} className="grid grid-cols-2 gap-3">
-            {(["wedding", "ivory"] as const).map((c) => (
-              <button
-                key={c}
-                type="button"
-                role="radio"
-                aria-checked={cover === c}
-                onClick={() => setCover(c)}
-                className="flex flex-col items-center gap-2 rounded-xl p-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                <div data-theme={c === "ivory" ? "ivory" : "wedding"} className="w-full">
-                  <InviteCard text={coverText} lines={cardLines} />
-                </div>
-                <span className="text-xs font-bold">
-                  {c === "ivory" ? create.ivoryGold : create.maroonGold}
-                  {cover === c ? ` · ${create.picked}` : ""}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+        <TemplatePicker eventType={eventType} value={template} onChange={setPicked} text={coverText} />
+        <p className="text-xs text-muted-foreground">{create.templateNote}</p>
         <p className="text-xs font-bold tracking-[0.18em] text-muted-foreground uppercase">{create.motion}</p>
         <div className="grid grid-cols-2 gap-3">
           <PillButton type="button" aria-pressed={mode === "animated"} variant={mode === "animated" ? "primary" : "secondary"} onClick={() => setMode("animated")}>
@@ -360,7 +332,7 @@ export function CreateForm() {
     );
 
   return (
-    <div data-theme={theme} className="desk-md rounded-3xl md:px-8 md:py-10">
+    <div style={designVars(design) as React.CSSProperties} className="desk-md rounded-3xl md:px-8 md:py-10">
       <div className="relative mx-auto w-full max-w-md md:grid md:max-w-5xl md:grid-cols-2 md:overflow-hidden md:rounded-xl md:shadow-2xl">
         <form onSubmit={next} className="book-page md-gutter-left flex flex-col gap-5 md:px-12 md:py-12" aria-busy={busy}>
           <StepHeader step={step} total={TOTAL} onBack={step > 1 && !turning ? () => goStep(step - 1) : undefined} />

@@ -60,7 +60,7 @@ export function UpgradeCard({
         order_id: order.orderId,
         amount: order.amountMinor,
         currency: order.currency,
-        name: "Regalia",
+        name: "Invitea",
         prefill: { email },
         theme: { color: "#6b1d2a" },
         handler: async (response: CheckoutResponse) => {

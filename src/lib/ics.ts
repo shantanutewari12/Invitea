@@ -65,11 +65,11 @@ export function buildIcs(event: IcsEvent, now: Date = new Date()): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Regalia//Invitation//EN",
+    "PRODID:-//Invitea//Invitation//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${event.uid}@regalia`,
+    `UID:${event.uid}@invitea`,
     `DTSTAMP:${toIcsUtc(now)}`,
     `DTSTART:${toIcsUtc(start)}`,
     `DTEND:${toIcsUtc(end)}`,

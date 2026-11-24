@@ -5,6 +5,7 @@ import { Component, lazy, type ReactNode, Suspense, useEffect, useMemo, useState
 import { viewer } from "@/copy/en";
 import { buildIcs, downloadIcs } from "@/lib/ics";
 import type { InvitePayload } from "@/lib/invite-payload";
+import { designFor, designVars } from "@/lib/spec/designs";
 import { inviteKeyFromPathname } from "@/lib/token-format";
 import { InviteRenderer } from "@/renderer/InviteRenderer";
 import { Loader } from "@/renderer/book/Loader";
@@ -120,11 +121,12 @@ function InviteView({
 
   const firstEvent = spec.events[0];
   if (!firstEvent) return null;
+  const vars = designVars(designFor(spec.eventType, spec.template)) as React.CSSProperties;
 
   return (
     <div
       data-theme={themeFor(spec)}
-      style={themeVars}
+      style={{ ...themeVars, ...vars }}
       data-motion={animated ? "full" : "reduced"}
       data-display-mode={animated ? "animated" : "static"}
       data-testid="viewer-root"
@@ -138,7 +140,7 @@ function InviteView({
         showMotionToggle={payload.invite.displayMode === "animated"}
       />
       {!motionKnown || (animated && !loaderDone) ? (
-        <Loader icon={loaderIconFor(spec.eventType)} theme={themeFor(spec)} still={!animated} />
+        <Loader icon={loaderIconFor(spec.eventType)} theme={themeFor(spec)} still={!animated} style={vars} />
       ) : (
         <InviteRenderer
           layout="book"
