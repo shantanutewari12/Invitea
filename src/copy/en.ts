@@ -236,6 +236,7 @@ export const rsvp = {
   namePlaceholder: "So the hosts know who is coming",
   commonFailed: "We couldn't send your reply. Please check your connection and try again.",
   commonThanks: "Thank you! The hosts have your reply.",
+  thanksOverlay: "Thanks for your response",
 } as const;
 
 export const errors = {

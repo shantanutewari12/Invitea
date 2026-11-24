@@ -159,7 +159,11 @@ export function CreateForm() {
       });
       if (generated.status === 429) throw new Error(errors.rateLimited);
       if (generated.status === 422) throw new Error(create.invalidTime);
-      if (!generated.ok) throw new Error(errors.invalidInput);
+      if (!generated.ok) {
+        const detail = (await generated.json().catch(() => null)) as { error?: { fields?: string[] } } | null;
+        const fields = detail?.error?.fields?.filter(Boolean) ?? [];
+        throw new Error(fields.length > 0 ? `${errors.invalidInput} (${fields.join(", ")})` : errors.invalidInput);
+      }
       const { spec, source } = (await generated.json()) as { spec: Record<string, unknown>; source: "ai" | "fallback" };
       // The template picked in step 3 sets the look (and its colours), like the editor's template buttons.
       spec.template = template;

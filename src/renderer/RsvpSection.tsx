@@ -1,7 +1,8 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { fmt, rsvp as rsvpCopy } from "@/copy/en";
 import { RSVP_STATUSES, type RsvpStatus } from "@/lib/spec/constants";
@@ -28,7 +29,67 @@ const resultCopy: Record<string, string> = {
   sending: rsvpCopy.sending,
 };
 
+/** A full-screen thank-you that plays for a few seconds after a reply is sent (or saved to send later). */
+function ThanksOverlay({ result, disabled }: { result: RsvpController["result"]; disabled: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [vars, setVars] = useState<Record<string, string>>({});
+  const probe = useRef<HTMLSpanElement>(null);
+  const last = useRef(result);
+  const timer = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    const before = last.current;
+    last.current = result;
+    if (disabled || before === result) return;
+    if (result !== "sent" && result !== "queued" && result !== "synced") return;
+    const cs = probe.current ? getComputedStyle(probe.current) : null;
+    const read = (name: string, fallback: string) => cs?.getPropertyValue(name).trim() || fallback;
+    setVars({ "--tk-bg": read("--cover", "#7a1f3d"), "--tk-fg": read("--cover-text", "#fff8ec"), "--tk-gold": read("--foil", "#d9a441") });
+    setOpen(true);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setOpen(false), 3800);
+  }, [result, disabled]);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  return (
+    <>
+      <span ref={probe} hidden />
+      {open &&
+        createPortal(
+          <div
+            data-testid="rsvp-thanks"
+            role="status"
+            aria-live="polite"
+            onClick={() => setOpen(false)}
+            style={vars}
+            className="thanks-overlay fixed inset-0 z-[200] flex flex-col items-center justify-center gap-6 px-8 text-center"
+          >
+            <svg viewBox="0 0 120 120" className="thanks-badge size-32" aria-hidden="true">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--tk-gold)" strokeWidth="3" className="thanks-ring" />
+              <circle cx="60" cy="60" r="40" fill="var(--tk-gold)" opacity="0.18" />
+              <path d="M38 62 54 77 84 45" fill="none" stroke="var(--tk-gold)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" className="thanks-check" />
+            </svg>
+            <p className="thanks-text font-display text-4xl leading-tight font-bold">{rsvpCopy.thanksOverlay}</p>
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <span key={i} className="thanks-spark" style={{ "--a": `${i * 45}deg`, "--d": `${i * 70}ms` } as React.CSSProperties} />
+            ))}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
 export function RsvpSection({ controller }: { controller: RsvpController }) {
+  return (
+    <>
+      <RsvpBody controller={controller} />
+      <ThanksOverlay result={controller.result} disabled={controller.mode === "preview"} />
+    </>
+  );
+}
+
+function RsvpBody({ controller }: { controller: RsvpController }) {
   const { mode, maxPartySize, previous, result, onSubmit } = controller;
   const [status, setStatus] = useState<RsvpStatus>(previous?.status ?? "yes");
   const [partySize, setPartySize] = useState<number>(Math.min(Math.max(previous?.partySize ?? 1, 1), maxPartySize));

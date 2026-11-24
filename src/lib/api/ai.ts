@@ -18,7 +18,8 @@ export async function handleGenerateInvite(
   const body = await readJson(request, MAX_BODY_BYTES);
   if (!body.ok) return body.response;
   const input = generateInviteInputSchema.safeParse(body.value);
-  if (!input.success) return errorResponse(400, "invalid_input");
+  // Field names only (never values), so a bad form can be diagnosed.
+  if (!input.success) return errorResponse(400, "invalid_input", { fields: input.error.issues.map((i) => i.path.join(".")) });
 
   const { user } = ctx;
   const hourOk = await ctx.limiter.consumeRateLimit(`ai:h:${user.id}`, 3600, AI_LIMITS.perHour);
