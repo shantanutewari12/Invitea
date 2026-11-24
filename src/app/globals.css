@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../styles/tokens.css";
+
+@layer components {
+  /* Gold hairline frame used across the host UI. */
+  .hairline {
+    border: 1px solid var(--gold);
+  }
+  .arch-frame {
+    border-top-left-radius: 999px;
+    border-top-right-radius: 999px;
+  }
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

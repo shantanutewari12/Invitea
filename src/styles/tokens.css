@@ -1,0 +1,274 @@
+/*
+ * Regalia design tokens: ivory, deep burgundy, antique gold.
+ * Shared by the host app (src/app/globals.css) and the standalone guest viewer
+ * (src/viewer/viewer.css). Requires Tailwind v4 to be imported by the including file.
+ */
+
+@theme inline {
+  --font-sans: var(--font-ui), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-modern: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-heading: var(--font-display);
+  --font-script: var(--font-dancing), "Dancing Script", cursive;
+
+  /* Book theme colours (set per theme by [data-theme], see below). */
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-cover: var(--cover);
+  --color-foil: var(--foil);
+  --color-cover-text: var(--cover-text);
+  --color-btn: var(--btn);
+  --color-btn-text: var(--btn-text);
+  --color-desk-text: var(--desk-text);
+  --color-muted-ink: var(--muted-ink);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-text: var(--gold-text);
+  --color-ivory: var(--ivory);
+  --color-burgundy: var(--burgundy);
+
+  /* Invite renderer palette (set per invite via inline CSS variables). */
+  --color-inv-bg: var(--inv-bg);
+  --color-inv-surface: var(--inv-surface);
+  --color-inv-accent: var(--inv-accent);
+  --color-inv-text: var(--inv-text);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --ivory: #fbf3e4;
+  --burgundy: #7a1f3d;
+  --gold: #d4a24c;
+  --gold-text: #7a5a1a;
+
+  --background: #fbf3e4;
+  --foreground: #2b1b24;
+  --card: #fffaf0;
+  --card-foreground: #2b1b24;
+  --popover: #fffaf0;
+  --popover-foreground: #2b1b24;
+  --primary: #7a1f3d;
+  --primary-foreground: #fbf3e4;
+  --secondary: #f3e7cf;
+  --secondary-foreground: #7a1f3d;
+  --muted: #f3e7cf;
+  --muted-foreground: #6b5560;
+  --accent: #efe2c0;
+  --accent-foreground: #7a1f3d;
+  --destructive: #a3202c;
+  --border: #d8c9ad;
+  --input: #6b5560;
+  --ring: #7a1f3d;
+  --radius: 0.75rem;
+
+  /* Defaults so the renderer never paints with undefined variables. */
+  --inv-bg: #fbf3e4;
+  --inv-surface: #fffaf0;
+  --inv-accent: #8a6420;
+  --inv-text: #2b1b24;
+
+  /* Wedding is the default book theme. */
+  --desk-from: #4a2a38;
+  --desk-to: #241520;
+  --desk-text: #f3dfa8;
+  --cover: #7a1f3d;
+  --foil: #d4a24c;
+  --cover-text: #f3dfa8;
+  --paper: #fbf3e4;
+  --ink: #2b1b24;
+  --muted-ink: #6b5560;
+  --accent-text: #8a6420;
+  --btn: #7a1f3d;
+  --btn-text: #fbf3e4;
+}
+
+/* One config entry per event theme. A new theme = one more block here. */
+[data-theme="ivory"] {
+  --cover: #f3e7cf;
+  --foil: #b8862f;
+  --cover-text: #5a3a1a;
+}
+[data-theme="birthday"] {
+  --desk-from: #4f3c80;
+  --desk-to: #2a1f4a;
+  --desk-text: #fff1c9;
+  --cover: #ff6fa5;
+  --foil: #ffc93c;
+  --cover-text: #2b1b3d;
+  --paper: #fff8e8;
+  --ink: #2b1b3d;
+  --muted-ink: #5b4a6b;
+  --accent-text: #8a2a5a;
+  --btn: #ff6fa5;
+  --btn-text: #2b1b3d;
+}
+[data-theme="baby"] {
+  --desk-from: #2f5a66;
+  --desk-to: #1a3039;
+  --desk-text: #e6f6f2;
+  --cover: #7fc8c0;
+  --foil: #f2b84b;
+  --cover-text: #1f3a3a;
+  --paper: #f7fbf4;
+  --ink: #1f3a3a;
+  --muted-ink: #4d6666;
+  --accent-text: #2f6b66;
+  --btn: #7fc8c0;
+  --btn-text: #1f3a3a;
+}
+[data-theme="housewarming"] {
+  --desk-from: #5a3a22;
+  --desk-to: #2a1a10;
+  --desk-text: #ffe9c2;
+  --cover: #a85a1e;
+  --foil: #f0c36a;
+  --cover-text: #fff1d6;
+  --paper: #fff6ea;
+  --ink: #3a2414;
+  --muted-ink: #6e5645;
+  --accent-text: #8a4a14;
+  --btn: #a85a1e;
+  --btn-text: #fff6ea;
+}
+
+/* Book chrome: the desk behind the book, paper pages, spine and gutter shading. */
+.book-desk {
+  background: radial-gradient(ellipse at 50% 35%, var(--desk-from), var(--desk-to));
+  color: var(--cover-text);
+}
+/* The desk only shows behind the two-page book on wider screens. */
+@media (min-width: 768px) {
+  .desk-md {
+    background: radial-gradient(ellipse at 50% 35%, var(--desk-from), var(--desk-to));
+  }
+  .md-gutter-left {
+    background-image: linear-gradient(to left, rgb(60 40 20 / 0.28), transparent 18%);
+  }
+}
+.book-page {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+.book-spine {
+  box-shadow: inset 14px 0 12px -10px rgb(0 0 0 / 0.28);
+}
+.book-gutter-left {
+  background-image: linear-gradient(to left, rgb(60 40 20 / 0.28), transparent 18%);
+}
+.book-gutter-right {
+  background-image: linear-gradient(to right, rgb(60 40 20 / 0.28), transparent 18%);
+}
+.book-cover {
+  background-color: var(--cover);
+  color: var(--cover-text);
+  box-shadow:
+    inset 18px 0 0 rgb(0 0 0 / 0.14),
+    5px 0 0 -1px #efe4cc,
+    8px 0 0 -2px #cfc3a8,
+    0 24px 40px -12px rgb(0 0 0 / 0.55);
+}
+
+/* Motion. Static mode / reduced motion: data-motion="reduced" strips these (see below). */
+@keyframes book-bounce {
+  0%, 100% { transform: translateY(0) scale(1.12, 0.88); }
+  12% { transform: translateY(0) scale(0.96, 1.05); }
+  50% { transform: translateY(-64px) scale(1, 1); }
+}
+@keyframes book-shadow {
+  0%, 100% { transform: scale(1); opacity: 0.45; }
+  50% { transform: scale(0.55); opacity: 0.2; }
+}
+@keyframes book-cover-open {
+  to { transform: perspective(1100px) rotateY(-125deg); opacity: 0; }
+}
+/* The leaf swings over the spread; the pages under it change while it is edge-on. */
+@keyframes book-leaf-turn {
+  0% { transform: perspective(1600px) rotateY(0deg); box-shadow: -2px 0 12px rgb(0 0 0 / 0.15); }
+  50% { box-shadow: -18px 0 40px rgb(0 0 0 / 0.35); }
+  100% { transform: perspective(1600px) rotateY(-180deg); box-shadow: 2px 0 12px rgb(0 0 0 / 0.15); }
+}
+@keyframes book-fade {
+  from { opacity: 0; transform: translate3d(28px, 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes book-soft {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+.book-bounce { animation: book-bounce 0.4s ease-in-out 3; }
+.book-shadow { animation: book-shadow 0.4s ease-in-out 3; }
+.book-cover-open { transform-origin: left center; will-change: transform, opacity; animation: book-cover-open 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+.book-leaf {
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  animation: book-leaf-turn 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+.book-page-in { will-change: transform, opacity; animation: book-fade 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.book-page-soft { animation: book-soft 0.4s ease-out; }
+/* The simple slide stays in static mode; the bounce and 3D are removed. */
+[data-motion="reduced"] .book-page-in { animation: book-fade 0.2s ease-out !important; }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
+
+/* Static mode never animates; guests can also force this via "Reduce motion". */
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
